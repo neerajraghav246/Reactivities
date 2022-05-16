@@ -14,7 +14,7 @@ export default observer(function ActiveDashBoard() {
         if (activityRegistry.size <= 1) loadActivities();
     }, [loadActivities, activityRegistry]);
 
-    if (activityStore.loadingInitial) return <LoadingComponent inverted={true} content='Loading app' />
+    if (activityStore.loadingInitial) return <LoadingComponent inverted={true} content='Loading activities' />
 
     return (
         <Grid>

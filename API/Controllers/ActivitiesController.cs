@@ -1,8 +1,5 @@
-using Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Microsoft.EntityFrameworkCore;
-using MediatR;
 using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -10,6 +7,7 @@ namespace API.Controllers
 {
     public class ActivitiesController : BaseApiControlller
     {
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetActivities()
         {

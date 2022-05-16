@@ -10,13 +10,29 @@ import TestErrors from '../../features/errors/TestError';
 import { ToastContainer } from 'react-toastify';
 import NotFound from '../../features/errors/NotFound';
 import ServerError from '../../features/errors/ServerError';
+import LoginForm from '../../features/users/LoginForm';
+import { useStore } from '../stores/store';
+import { useEffect } from 'react';
+import LoadingComponent from './LoadingComponent';
+import ModalContainer from '../common/modals/ModalContainer';
 
 function App() {
   const location = useLocation();
+  const { commonStore, userStore } = useStore();
+  useEffect(() => {
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setApploaded());
+    } else {
+      commonStore.setApploaded();
+    }
+  }, [commonStore, userStore]);
+
+  if (!commonStore.appLoaded) return <LoadingComponent content='Loading app...' inverted={false} />
 
   return (
     <>
       <ToastContainer position='bottom-right' hideProgressBar />
+      <ModalContainer />
       <Route exact path='/' component={HomePage} />
       <Route path={'/(.+)'}
         render={() => (
@@ -29,6 +45,7 @@ function App() {
                 <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm} />
                 <Route path='/errors' component={TestErrors} />
                 <Route path='/server-error' component={ServerError} />
+                <Route path='/login' component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>
