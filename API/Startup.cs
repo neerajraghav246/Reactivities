@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Extentions;
 using API.Middleware;
+using API.SignalR;
 using Application.Activities;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -69,6 +70,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }
