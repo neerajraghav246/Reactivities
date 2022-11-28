@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Core;
+using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application.Activities
@@ -20,9 +15,11 @@ namespace Application.Activities
         {
             private readonly DataContext context;
             private readonly IMapper mapper;
+            private readonly IUserAccessor userAccessor;
 
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
+                this.userAccessor = userAccessor;
                 this.context = context;
                 this.mapper = mapper;
             }
@@ -30,7 +27,11 @@ namespace Application.Activities
             public async Task<Result<List<ActivityDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activities = await context.Activities
-                            .ProjectTo<ActivityDTO>(mapper.ConfigurationProvider)
+                            .ProjectTo<ActivityDTO>(mapper.ConfigurationProvider,
+                            new
+                            {
+                                currentUsername = userAccessor.GetUsername()
+                            })
                             .ToListAsync();
 
                 return Result<List<ActivityDTO>>.Success(activities);
